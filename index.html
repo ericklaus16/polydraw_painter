@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolyDraw Painter</title>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="content">
+        <div id="centered-content">
+            <div id="panel">
+                <div>
+                    <label for="color">Cor de Preenchimento</label>
+                    <input type="color" id="color" />
+                </div>
+
+                <button onclick="handleClean()">Limpar</button>
+                <button>Pintar</button>
+            </div>
+            <div id="drawing-area" onclick="handleAddPoint()">
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
