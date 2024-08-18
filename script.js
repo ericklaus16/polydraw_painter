@@ -44,13 +44,13 @@ function handleClean() {
         pontosExistentes.forEach(ponto => {
             ponto.remove();
         });
-        pontos = [{}];
+        pontos = [];
         
         if(arestas){
             arestasExistentes.forEach(aresta => {
                 aresta.remove();
             });
-            arestas = [{}];
+            arestas = [];
         }
     }
 }
@@ -102,6 +102,8 @@ function handleAddPoint(){
             console.log(pontos.length);
             point.setAttribute("title", "Ponto " + alfabeto[pontos.length]);
             pontos.push({ x: e.pageX, y: e.pageY })
+
+            console.log(pontos);
             
             document.body.appendChild(point);
 
@@ -112,6 +114,6 @@ function handleAddPoint(){
     }
 } 
 
-function fillPaint(){
-    
+function handleFill(){
+    handleAddLine(pontos[pontos.length - 1], pontos[0], alfabeto[pontos.length - 1] + alfabeto[0]);
 }
