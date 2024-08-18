@@ -11,14 +11,17 @@
         <div id="centered-content">
             <div id="panel">
                 <div>
-                    <label for="color">Cor de Preenchimento</label>
-                    <input type="color" id="color" />
+                    <label for="color">Cor dos Vértices</label>
+                    <input type="color" id="vertex-color" />
                 </div>
-
+                <div>
+                    <label for="color">Cor de Preenchimento</label>
+                    <input type="color" id="fill-color" />
+                </div>
                 <button onclick="handleClean()">Limpar</button>
                 <button>Pintar</button>
             </div>
-            <div id="drawing-area" onclick="handleAddPoint()">
+            <div id="drawing-area">
             </div>
         </div>
     </div>
