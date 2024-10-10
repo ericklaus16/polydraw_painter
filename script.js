@@ -2,6 +2,10 @@ var quadro = document.getElementById("drawing-area");
 var verticeCor = "black";
 var pinturaCor = "black";
 
+var polygonTable = document.querySelector("#polygon-table");
+
+var id = 0;
+
 quadro.addEventListener("mousedown", function(){
     handleAddPoint();
 });
@@ -35,6 +39,7 @@ var alfabeto = [
 ]
 var pontos = []
 var arestas = []
+var poligonos = []
 
 function handleClean() {
     let pontosExistentes = document.querySelectorAll("#point");
@@ -44,7 +49,6 @@ function handleClean() {
         pontosExistentes.forEach(ponto => {
             ponto.remove();
         });
-        pontos = [];
         
         if(arestas){
             arestasExistentes.forEach(aresta => {
@@ -52,8 +56,29 @@ function handleClean() {
             });
             arestas = [];
         }
+
+        if(poligonos){
+            poligonos = []
+        }
     }
 }
+
+function handleDeletePolygon(id) {
+    if (id) {
+        console.log(`Deletando polígono ${id}`);
+        
+        let pontosExistentes = Array.from(document.getElementsByClassName((id - 1).toString()));
+
+        console.log(pontosExistentes);
+        
+        pontosExistentes.forEach(elemento => {
+            elemento.remove();
+        });
+        
+        poligonos = poligonos.filter(p => p.id !== id);
+    }
+}
+
 
 function handleAddLine(ponto1, ponto2, nomeAresta){
     let x1 = ponto1.x;
@@ -81,6 +106,7 @@ function handleAddLine(ponto1, ponto2, nomeAresta){
 
     arestas.push({ nome: nomeAresta, x1: x1, y1: y1, x2: x2, y2: y2, elemento: line});
     line.setAttribute("title", "Aresta " + nomeAresta);
+    line.setAttribute("class", id.toString());
     document.body.appendChild(line);
 }
 
@@ -99,7 +125,7 @@ function handleAddPoint(){
             point.style.top = e.pageY + 'px';
             point.style.backgroundColor = verticeCor;
             point.setAttribute("id", "point");
-            console.log(pontos.length);
+            point.setAttribute("class", (id).toString());
             point.setAttribute("title", "Ponto " + alfabeto[pontos.length]);
             pontos.push({ x: e.pageX, y: e.pageY })
 
@@ -116,4 +142,14 @@ function handleAddPoint(){
 
 function handleFill(){
     handleAddLine(pontos[pontos.length - 1], pontos[0], alfabeto[pontos.length - 1] + alfabeto[0]);
+
+    poligonos.push({ id: id, pontos: pontos, arestas: arestas, cor: pinturaCor });
+    polygonTable.innerHTML += `<tr class="${id}">
+        <th>${poligonos.length}</th>
+        <th>${pinturaCor}</th>
+        <th><button onclick="handleDeletePolygon(id + 1)">Deletar</button></th>
+    </tr>`; 
+    pontos = [];
+    arestas = [];
+    id += 1;
 }

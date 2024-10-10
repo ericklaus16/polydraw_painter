@@ -19,9 +19,18 @@
                     <input type="color" id="fill-color" />
                 </div>
                 <button onclick="handleClean()">Limpar</button>
-                <button onclick="handleFill()">Pintar</button>
+                <button onclick="handleFill()">Adicionar Polígono</button>
             </div>
             <div id="drawing-area">
+            </div>
+            <div id="polygons">
+                <table id="polygon-table" style="width: 100%">
+                    <tr>
+                        <th>Id do Polígono</th>
+                        <th>Cor do Vértice</th>
+                        <th>Ações</th>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
