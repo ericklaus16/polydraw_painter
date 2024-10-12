@@ -1,9 +1,7 @@
 var quadro = document.getElementById("drawing-area");
-var pinturaCor = "black";
-
 var polygonTable = document.querySelector("#polygon-table");
-
 var id = 0;
+var pinturaCor = "black";
 
 quadro.addEventListener("mousedown", function(){
     handleAddPoint();
@@ -14,11 +12,13 @@ document.getElementById("fill-color").addEventListener("change", function(e){
 });
 
 var rect = quadro.getBoundingClientRect();
-
 var xMin = rect.left;
 var xMax = rect.right;
 var yMin = rect.top;
 var yMax = rect.bottom;
+
+var scanlines = yMax - yMin;
+console.log(scanlines)
 
 var alfabeto = [
     'A', 'B', 'C', 'D', 'E', 
@@ -34,24 +34,22 @@ var poligonos = []
 function handleClean() {
     let pontosExistentes = document.querySelectorAll("#point");
     let arestasExistentes = document.querySelectorAll("#line");
+    let pinturasExistentes = document.querySelectorAll("#paintedline");
 
     if(pontosExistentes){
+        pinturasExistentes.forEach(pintura => {
+            pintura.remove();
+        });
         pontosExistentes.forEach(ponto => {
             ponto.remove();
         });
-        pontos = []
-        
-        if(arestas){
-            arestasExistentes.forEach(aresta => {
-                aresta.remove();
-            });
-            arestas = [];
-        }
+        arestasExistentes.forEach(aresta => {
+            aresta.remove();
+        });
 
-        if(poligonos){
-            poligonos = []
-        }
-
+        pontos = [];
+        arestas = [];
+        poligonos = [];
         polygonTable.innerHTML = `<tr>
             <th>Polígono</th>
             <th>Cor</th>
@@ -63,12 +61,51 @@ function handleClean() {
 function handleDeletePolygon(id) {
     console.log(`Deletando polígono ${id}`);
     let pontosExistentes = Array.from(document.getElementsByClassName((id).toString()));
+    let pintura = Array.from(document.getElementsByClassName(`paintedline${id}`));
     
+    pintura.forEach(elemento => {
+        elemento.remove();
+    });
+
     pontosExistentes.forEach(elemento => {
         elemento.remove();
     });
     
     // poligonos = poligonos.filter(p => p.id !== id);
+}
+
+function fillPoly(id, pontos, pinturaCor) {
+    for (let y = yMin; y <= yMax - 1; y++) {
+        let intersecoes = [];
+
+        for (let i = 0; i < pontos.length; i++) {
+            let pontoAtual = pontos[i];
+            let proximoPonto = pontos[(i + 1) % pontos.length];
+
+            if ((pontoAtual.y < y && proximoPonto.y >= y) || (proximoPonto.y < y && pontoAtual.y >= y)) {
+                let xInterseccao = pontoAtual.x + (y - pontoAtual.y) * (proximoPonto.x - pontoAtual.x) / (proximoPonto.y - pontoAtual.y);
+                intersecoes.push(xInterseccao);
+            }
+        }
+
+        intersecoes.sort((a, b) => a - b);
+
+        for (let i = 0; i < intersecoes.length; i += 2) {
+            if (intersecoes[i + 1]) {
+                let linha = document.createElement("div");
+                linha.setAttribute("id", "paintedline");
+                linha.setAttribute("class", `paintedline${id}`);
+                linha.style.position = "absolute";
+                linha.style.backgroundColor = pinturaCor;
+                linha.style.height = "1px";
+                linha.style.left = intersecoes[i] + "px";
+                linha.style.width = (intersecoes[i + 1] - intersecoes[i]) + "px";
+                linha.style.top = y + "px";
+
+                document.body.appendChild(linha);
+            }
+        }
+    }
 }
 
 
@@ -136,6 +173,9 @@ function handleFill(){
     handleAddLine(pontos[pontos.length - 1], pontos[0], alfabeto[pontos.length - 1] + alfabeto[0]);
 
     poligonos.push({ id: id, pontos: pontos, arestas: arestas, cor: pinturaCor });
+
+    fillPoly(id, pontos, pinturaCor);
+
     polygonTable.innerHTML += `<tr class="${id}">
         <th>${poligonos.length}</th>
         <th><input type="color" value="${pinturaCor}" disabled/></th>
