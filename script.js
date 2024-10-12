@@ -1,7 +1,10 @@
 var quadro = document.getElementById("drawing-area");
-var polygonTable = document.querySelector("#polygon-table");
+var tabelaPoligonos = document.querySelector("#polygon-table");
 var id = 0;
 var pinturaCor = "black";
+
+var bPintarArestas = false;
+var pintarArestasCor = document.querySelector("#paintLineOption").value;
 
 quadro.addEventListener("mousedown", function(){
     handleAddPoint();
@@ -11,14 +14,16 @@ document.getElementById("fill-color").addEventListener("change", function(e){
     pinturaCor = e.target.value;
 });
 
+document.getElementById("paintLineOption").addEventListener("change", function(e){
+    bPintarArestas = !bPintarArestas;
+    pintarArestasCor = document.querySelector("#paintLineOption").value;
+})
+
 var rect = quadro.getBoundingClientRect();
 var xMin = rect.left;
 var xMax = rect.right;
 var yMin = rect.top;
 var yMax = rect.bottom;
-
-var scanlines = yMax - yMin;
-console.log(scanlines)
 
 var alfabeto = [
     'A', 'B', 'C', 'D', 'E', 
@@ -50,7 +55,7 @@ function handleClean() {
         pontos = [];
         arestas = [];
         poligonos = [];
-        polygonTable.innerHTML = `<tr>
+        tabelaPoligonos.innerHTML = `<tr>
             <th>Polígono</th>
             <th>Cor</th>
             <th>Ações</th>
@@ -72,6 +77,19 @@ function handleDeletePolygon(id) {
     });
     
     // poligonos = poligonos.filter(p => p.id !== id);
+}
+
+function handleChangePolyColor(id, color){
+    let pintura = Array.from(document.getElementsByClassName(`paintedline${id}`));
+    if (bPintarArestas){
+        console.log(poligonos[id].arestas)
+    }
+
+    pintura.forEach(elemento => {
+        elemento.style.backgroundColor = color;
+    })
+
+    console.log(poligonos[id].arestas)
 }
 
 function fillPoly(id, pontos, pinturaCor) {
@@ -108,25 +126,22 @@ function fillPoly(id, pontos, pinturaCor) {
     }
 }
 
-
 function handleAddLine(ponto1, ponto2, nomeAresta){
     let x1 = ponto1.x;
     let y1 = ponto1.y;
     let x2 = ponto2.x;
     let y2 = ponto2.y;
 
-    // Criar um elemento para a linha
     let line = document.createElement("div");
     line.setAttribute("id", "line");
     line.style.position = "absolute";
-    line.style.backgroundColor = "black";
+    line.style.backgroundColor = bPintarArestas ? pintarArestasCor : "yellow";
 
     let width = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)); // Fórmula de distancia entre pontos
 
     line.style.width = width + "px"; // Comprimento da linha
     line.style.height = "2px"; // Espessura da linha
 
-    // Posicionar a linha
     let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI; // Ângulo da linha
     line.style.transformOrigin = "0 75%"; // Origem da transformação
     line.style.transform = `rotate(${angle}deg)`;
@@ -143,7 +158,6 @@ function handleAddPoint(){
     document.onmousedown = function(e){
         let xDaTela = e.pageX - xMin;
         let yDaTela = e.pageY - yMin;
-
 
         if(xDaTela >= 0 && yDaTela >= 0 && e.pageX < xMax && e.pageY < yMax){ // O ponto está na tela
             console.log(xDaTela + ", " + yDaTela);
@@ -176,9 +190,9 @@ function handleFill(){
 
     fillPoly(id, pontos, pinturaCor);
 
-    polygonTable.innerHTML += `<tr class="${id}">
+    tabelaPoligonos.innerHTML += `<tr class="${id}">
         <th>${poligonos.length}</th>
-        <th><input type="color" value="${pinturaCor}" disabled/></th>
+        <th><input type="color" value="${pinturaCor}" onChange="handleChangePolyColor(${id}, this.value)"/></th>
         <th><i class="bi bi-trash-fill" onclick="handleDeletePolygon(${id})" style="cursor: pointer; color: #f00"/></th>
     </tr>`;
     pontos = [];
