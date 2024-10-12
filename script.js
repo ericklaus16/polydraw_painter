@@ -64,19 +64,16 @@ function handleClean() {
 }
 
 function handleDeletePolygon(id) {
-    if (id) {
-        console.log(`Deletando polígono ${id}`);
-        
-        let pontosExistentes = Array.from(document.getElementsByClassName((id - 1).toString()));
-
-        console.log(pontosExistentes);
-        
-        pontosExistentes.forEach(elemento => {
-            elemento.remove();
-        });
-        
-        poligonos = poligonos.filter(p => p.id !== id);
-    }
+    console.log(`Deletando polígono ${id}`);
+    
+    let pontosExistentes = Array.from(document.getElementsByClassName((id).toString()));
+    console.log(pontosExistentes);
+    
+    pontosExistentes.forEach(elemento => {
+        elemento.remove();
+    });
+    
+    poligonos = poligonos.filter(p => p.id !== id);
 }
 
 
@@ -147,8 +144,8 @@ function handleFill(){
     polygonTable.innerHTML += `<tr class="${id}">
         <th>${poligonos.length}</th>
         <th>${pinturaCor}</th>
-        <th><button onclick="handleDeletePolygon(id + 1)">Deletar</button></th>
-    </tr>`; 
+        <th><button onclick="handleDeletePolygon(${id})">Deletar</button></th>
+    </tr>`;
     pontos = [];
     arestas = [];
     id += 1;
