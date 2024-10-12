@@ -68,7 +68,7 @@ function handleDeletePolygon(id) {
         elemento.remove();
     });
     
-    poligonos = poligonos.filter(p => p.id !== id);
+    // poligonos = poligonos.filter(p => p.id !== id);
 }
 
 
@@ -139,7 +139,7 @@ function handleFill(){
     polygonTable.innerHTML += `<tr class="${id}">
         <th>${poligonos.length}</th>
         <th><input type="color" value="${pinturaCor}" disabled/></th>
-        <th><button onclick="handleDeletePolygon(${id})">Deletar</button></th>
+        <th><i class="bi bi-trash-fill" onclick="handleDeletePolygon(${id})" style="cursor: pointer; color: #f00"/></th>
     </tr>`;
     pontos = [];
     arestas = [];
