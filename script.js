@@ -91,37 +91,55 @@ function handleChangePolyColor(id, color){
 
     console.log(poligonos[id].arestas)
 }
-
 function fillPoly(id, pontos, pinturaCor) {
-    for (let y = yMin; y <= yMax - 1; y++) {
-        let intersecoes = [];
+    let scanlines = Array(yMax - yMin + 1).fill(0).map(() => []); // Array para armazenar interseções por scanline
 
-        for (let i = 0; i < pontos.length; i++) {
-            let pontoAtual = pontos[i];
-            let proximoPonto = pontos[(i + 1) % pontos.length];
+    // Processar arestas do polígono
+    for (let i = 0; i < pontos.length; i++) {
+        let pontoAtual = pontos[i];
+        let proximoPonto = pontos[(i + 1) % pontos.length];
 
-            if ((pontoAtual.y < y && proximoPonto.y >= y) || (proximoPonto.y < y && pontoAtual.y >= y)) {
-                let xInterseccao = pontoAtual.x + (y - pontoAtual.y) * (proximoPonto.x - pontoAtual.x) / (proximoPonto.y - pontoAtual.y);
-                intersecoes.push(xInterseccao);
-            }
+        // Ignorar arestas horizontais
+        if (pontoAtual.y === proximoPonto.y) continue;
+            // Garantir que o ponto atual seja o de menor y
+            if (pontoAtual.y > proximoPonto.y) {
+                [pontoAtual, proximoPonto] = [proximoPonto, pontoAtual];
         }
 
+        let deltaX = (proximoPonto.x - pontoAtual.x) / (proximoPonto.y - pontoAtual.y); // Coeficiente angular
+        let xInterseccao = pontoAtual.x;
+
+        // Calcular as interseções de ymin até ymax
+        for (let y = pontoAtual.y; y < proximoPonto.y; y++) {
+            let scanlineIndex = y - yMin;
+            scanlines[scanlineIndex].push(xInterseccao);
+            xInterseccao += deltaX; // Incrementar a interseção usando Δx
+        }
+    }
+
+    // Desenhar os intervalos de preenchimento para cada scanline
+    for (let y = yMin; y <= yMax - 1; y++) {
+        let intersecoes = scanlines[y - yMin];
+
+        // Ordenar as interseções
         intersecoes.sort((a, b) => a - b);
 
+        // Desenhar as linhas horizontais entre pares de interseções
         for (let i = 0; i < intersecoes.length; i += 2) {
-            if (intersecoes[i + 1]) {
-                let linha = document.createElement("div");
-                linha.setAttribute("id", "paintedline");
-                linha.setAttribute("class", `paintedline${id}`);
-                linha.style.position = "absolute";
-                linha.style.backgroundColor = pinturaCor;
-                linha.style.height = "1px";
-                linha.style.left = intersecoes[i] + "px";
-                linha.style.width = (intersecoes[i + 1] - intersecoes[i]) + "px";
-                linha.style.top = y + "px";
+            let xIni = Math.ceil(intersecoes[i]);
+            let xFim = Math.floor(intersecoes[i + 1]);
 
-                document.body.appendChild(linha);
-            }
+            let linha = document.createElement("div");
+            linha.setAttribute("id", "paintedline");
+            linha.setAttribute("class", `paintedline${id}`);
+            linha.style.position = "absolute";
+            linha.style.backgroundColor = pinturaCor;
+            linha.style.height = "1px";
+            linha.style.left = xIni + "px";
+            linha.style.width = (xFim - xIni) + "px";
+            linha.style.top = y + "px";
+
+            document.body.appendChild(linha);
         }
     }
 }
