@@ -1,5 +1,4 @@
 var quadro = document.getElementById("drawing-area");
-var verticeCor = "black";
 var pinturaCor = "black";
 
 var polygonTable = document.querySelector("#polygon-table");
@@ -8,15 +7,6 @@ var id = 0;
 
 quadro.addEventListener("mousedown", function(){
     handleAddPoint();
-});
-
-document.getElementById("vertex-color").addEventListener("change", function(e){
-    verticeCor = e.target.value;
-
-    let pontosExistentes = document.querySelectorAll("#point");
-    pontosExistentes.forEach(ponto => {
-        ponto.style.backgroundColor = verticeCor;
-    });
 });
 
 document.getElementById("fill-color").addEventListener("change", function(e){
@@ -49,6 +39,7 @@ function handleClean() {
         pontosExistentes.forEach(ponto => {
             ponto.remove();
         });
+        pontos = []
         
         if(arestas){
             arestasExistentes.forEach(aresta => {
@@ -60,14 +51,18 @@ function handleClean() {
         if(poligonos){
             poligonos = []
         }
+
+        polygonTable.innerHTML = `<tr>
+            <th>Polígono</th>
+            <th>Cor</th>
+            <th>Ações</th>
+        `;
     }
 }
 
 function handleDeletePolygon(id) {
     console.log(`Deletando polígono ${id}`);
-    
     let pontosExistentes = Array.from(document.getElementsByClassName((id).toString()));
-    console.log(pontosExistentes);
     
     pontosExistentes.forEach(elemento => {
         elemento.remove();
@@ -120,7 +115,7 @@ function handleAddPoint(){
             point.style.position = "absolute";
             point.style.left = e.pageX + 'px';
             point.style.top = e.pageY + 'px';
-            point.style.backgroundColor = verticeCor;
+            point.style.backgroundColor = "black";
             point.setAttribute("id", "point");
             point.setAttribute("class", (id).toString());
             point.setAttribute("title", "Ponto " + alfabeto[pontos.length]);
@@ -143,7 +138,7 @@ function handleFill(){
     poligonos.push({ id: id, pontos: pontos, arestas: arestas, cor: pinturaCor });
     polygonTable.innerHTML += `<tr class="${id}">
         <th>${poligonos.length}</th>
-        <th>${pinturaCor}</th>
+        <th><input type="color" value="${pinturaCor}" disabled/></th>
         <th><button onclick="handleDeletePolygon(${id})">Deletar</button></th>
     </tr>`;
     pontos = [];
