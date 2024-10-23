@@ -1,0 +1,15 @@
+Nome: Eric Klaus Brenner Melo e Santos
+
+Instruções de como rodar o projeto:
+Sistema Operacional: Qualquer um (por ser uma aplicação web, pode ser executada em qualquer sistema operacional). O desenvolvimento foi feito no Windows.
+Compilador: -
+Versão: -
+Bibiliotecas Necessárias: -
+Aplicativo necessário: Qualquer navegador
+
+O projeto pode ser acessado online pelo link https://ericklaus16.github.io/polydraw_painter/
+
+Ou pode ser rodado locamente. Para rodar localmente, basta abrir o arquivo index.html em um navegador.
+
+Observação: em caso do gmail impedir o envio do arquivo .js, existe um repositório no github (https://github.com/ericklaus16/polydraw_painter) onde o arquivo script.js pode ser baixado.
+Após baixar bastar deixar o arquivo na pasta onde se encontra o "index.html" e o "style.css" e rodar o programa.

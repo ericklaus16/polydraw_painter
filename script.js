@@ -4,7 +4,7 @@ var id = 0;
 var pinturaCor = "black";
 
 var bPintarArestas = false;
-var pintarArestasCor = document.querySelector("#paintLineOption").value;
+var pintarArestas = document.querySelector("#paintLineOption").value;
 
 quadro.addEventListener("mousedown", function(){
     handleAddPoint();
@@ -16,7 +16,13 @@ document.getElementById("fill-color").addEventListener("change", function(e){
 
 document.getElementById("paintLineOption").addEventListener("change", function(e){
     bPintarArestas = !bPintarArestas;
-    pintarArestasCor = document.querySelector("#paintLineOption").value;
+    pintarArestas = document.querySelector("#paintLineOption").value;
+
+    arestasAtual = Array.from(document.getElementsByClassName(id.toString()));
+    arestasAtual = arestasAtual.filter(aresta => aresta.id === "line");
+    arestasAtual.forEach(aresta => {
+        aresta.style.backgroundColor = bPintarArestas ? pinturaCor : "yellow";
+    });
 })
 
 var rect = quadro.getBoundingClientRect();
@@ -81,16 +87,23 @@ function handleDeletePolygon(id) {
 
 function handleChangePolyColor(id, color){
     let pintura = Array.from(document.getElementsByClassName(`paintedline${id}`));
-    if (bPintarArestas){
-        console.log(poligonos[id].arestas)
-    }
+    let arestas = Array.from(document.getElementsByClassName(id.toString()));
+    arestas = arestas.filter(aresta => aresta.id === "line");
 
     pintura.forEach(elemento => {
         elemento.style.backgroundColor = color;
     })
 
+    if (bPintarArestas){
+        console.log(poligonos[id].arestas)
+        arestas.forEach(aresta => {
+            aresta.style.backgroundColor = color;
+        })
+    }
+
     console.log(poligonos[id].arestas)
 }
+
 function fillPoly(id, pontos, pinturaCor) {
     let scanlines = Array(yMax - yMin + 1).fill(0).map(() => []); // Array para armazenar interseções por scanline
 
@@ -153,7 +166,7 @@ function handleAddLine(ponto1, ponto2, nomeAresta){
     let line = document.createElement("div");
     line.setAttribute("id", "line");
     line.style.position = "absolute";
-    line.style.backgroundColor = bPintarArestas ? pintarArestasCor : "yellow";
+    line.style.backgroundColor = bPintarArestas ? pinturaCor : "yellow";
 
     let width = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)); // Fórmula de distancia entre pontos
 
