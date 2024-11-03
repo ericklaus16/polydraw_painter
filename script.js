@@ -187,21 +187,21 @@ function handleAddLine(ponto1, ponto2, nomeAresta){
 
 function handleAddPoint(){
     document.onmousedown = function(e){
-        let xDaTela = e.pageX - xMin;
-        let yDaTela = e.pageY - yMin;
+        let xDaTela = e.clientX - xMin;
+        let yDaTela = e.clientY - yMin;
 
-        if(xDaTela >= 0 && yDaTela >= 0 && e.pageX < xMax && e.pageY < yMax){ // O ponto está na tela
+        if(xDaTela >= 0 && yDaTela >= 0 && e.clientX < xMax && e.clientY < yMax){ // O ponto está na tela
             console.log(xDaTela + ", " + yDaTela);
 
             let point = document.createElement("div");
             point.style.position = "absolute";
-            point.style.left = e.pageX + 'px';
-            point.style.top = e.pageY + 'px';
+            point.style.left = e.clientX + 'px';
+            point.style.top = e.clientY + 'px';
             point.style.backgroundColor = "black";
             point.setAttribute("id", "point");
             point.setAttribute("class", (id).toString());
             point.setAttribute("title", "Ponto " + alfabeto[pontos.length]);
-            pontos.push({ x: e.pageX, y: e.pageY })
+            pontos.push({ x: e.clientX, y: e.clientY })
 
             console.log(pontos);
             
