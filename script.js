@@ -105,23 +105,24 @@ function handleChangePolyColor(id, color){
 }
 
 function fillPoly(id, pontos, pinturaCor) {
-    let scanlines = Array(yMax - yMin + 1).fill(0).map(() => []); // Array para armazenar interseções por scanline
+    let scanlines = Array(yMax - yMin + 1).fill(0).map(() => []);
 
-    // Processar arestas do polígono
     for (let i = 0; i < pontos.length; i++) {
         let pontoAtual = pontos[i];
         let proximoPonto = pontos[(i + 1) % pontos.length];
-
+        
         // Ignorar arestas horizontais
         if (pontoAtual.y === proximoPonto.y) continue;
-            // Garantir que o ponto atual seja o de menor y
-            if (pontoAtual.y > proximoPonto.y) {
-                [pontoAtual, proximoPonto] = [proximoPonto, pontoAtual];
+        
+        // Garantir que o ponto atual seja o de menor y
+        if (pontoAtual.y > proximoPonto.y) {
+            [pontoAtual, proximoPonto] = [proximoPonto, pontoAtual];
         }
-
+        
+        
         let deltaX = (proximoPonto.x - pontoAtual.x) / (proximoPonto.y - pontoAtual.y); // Coeficiente angular
         let xInterseccao = pontoAtual.x;
-
+        
         // Calcular as interseções de ymin até ymax
         for (let y = pontoAtual.y; y < proximoPonto.y; y++) {
             let scanlineIndex = y - yMin;
@@ -130,15 +131,16 @@ function fillPoly(id, pontos, pinturaCor) {
         }
     }
 
-    // Desenhar os intervalos de preenchimento para cada scanline
+
     for (let y = yMin; y <= yMax - 1; y++) {
         let intersecoes = scanlines[y - yMin];
+        console.log(intersecoes);
 
-        // Ordenar as interseções
         intersecoes.sort((a, b) => a - b);
 
+
         // Desenhar as linhas horizontais entre pares de interseções
-        for (let i = 0; i < intersecoes.length; i += 2) {
+        for (let i = 0; i < intersecoes.length; i+=2){
             let xIni = Math.ceil(intersecoes[i]);
             let xFim = Math.floor(intersecoes[i + 1]);
 
@@ -187,21 +189,21 @@ function handleAddLine(ponto1, ponto2, nomeAresta){
 
 function handleAddPoint(){
     document.onmousedown = function(e){
-        let xDaTela = e.clientX - xMin;
-        let yDaTela = e.clientY - yMin;
+        let xDaTela = e.pageX - xMin;
+        let yDaTela = e.pageY - yMin;
 
-        if(xDaTela >= 0 && yDaTela >= 0 && e.clientX < xMax && e.clientY < yMax){ // O ponto está na tela
+        if(xDaTela >= 0 && yDaTela >= 0 && e.pageX < xMax && e.pageY < yMax){ // O ponto está na tela
             console.log(xDaTela + ", " + yDaTela);
 
             let point = document.createElement("div");
             point.style.position = "absolute";
-            point.style.left = e.clientX + 'px';
-            point.style.top = e.clientY + 'px';
+            point.style.left = e.pageX + 'px';
+            point.style.top = e.pageY + 'px';
             point.style.backgroundColor = "black";
             point.setAttribute("id", "point");
             point.setAttribute("class", (id).toString());
             point.setAttribute("title", "Ponto " + alfabeto[pontos.length]);
-            pontos.push({ x: e.clientX, y: e.clientY })
+            pontos.push({ x: e.pageX, y: e.pageY })
 
             console.log(pontos);
             
